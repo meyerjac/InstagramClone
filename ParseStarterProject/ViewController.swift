@@ -1,92 +1,165 @@
-/**
-* Copyright (c) 2015-present, Parse, LLC.
-* All rights reserved.
-*
-* This source code is licensed under the BSD-style license found in the
-* LICENSE file in the root directory of this source tree. An additional grant
-* of patent rights can be found in the PATENTS file in the same directory.
-*/
-
 import UIKit
 import Parse
 
 class ViewController: UIViewController {
-    @IBAction func create(_ sender: Any) {
-        let alertController = UIAlertController(title: "hello there", message: "are you sure", preferredStyle: UIAlertControllerStyle.alert)
+    
+    var signupMode = true
+    
+    var activityIndicator = UIActivityIndicatorView()
+    
+    func createAlert(title: String, message: String) {
         
-        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
-            
-            print("clicker")
-            
+        let passwordEmailEmptyAlert = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
+        
+        passwordEmailEmptyAlert.addAction(UIAlertAction(title: "Ok", style: .default, handler: { (action) in
             self.dismiss(animated: true, completion: nil)
         }))
         
-        self.present(alertController, animated: true, completion: nil)
+        self.present(passwordEmailEmptyAlert, animated: true, completion: nil)
+        
+        
+    }
+    
+    @IBOutlet weak var signupOrLogin: UIButton!
+    
+    @IBOutlet weak var emailTextField: UITextField!
+    
+    @IBOutlet weak var passwordTextField: UITextField!
+    
+    @IBOutlet weak var changeSignupModeButton: UIButton!
+    
+    override func viewDidAppear(_ animated: Bool) {
+        
+        if PFUser.current() != nil {
+            
+            print("here 1")
+            
+            self.performSegue(withIdentifier: "showUserTable", sender: self)
+        }
+        self.navigationController?.navigationBar.isHidden = true
+    }
+    
+    @IBOutlet weak var messageLabel: UILabel!
+    
+    @IBAction func signupOrLogin(_ sender: Any) {
+        
+        if emailTextField.text == "" || passwordTextField.text == "" {
+            
+            createAlert(title: "Error in form", message: "please enter a valid email and password")
+            
+        } else {
+            
+            activityIndicator = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
+            activityIndicator.center = self.view.center
+            activityIndicator.hidesWhenStopped = true
+            activityIndicator.startAnimating()
+            activityIndicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
+            view.addSubview(activityIndicator)
+            UIApplication.shared.beginIgnoringInteractionEvents()
+            
+            if signupMode {
+                
+                //sign User Up
+                
+                let user = PFUser()
+                
+                user.username = emailTextField.text  //need a username, but not email
+                user.email = emailTextField.text
+                user.password = passwordTextField.text
+                user.signUpInBackground(block: { (success, error) in
+                    
+                    self.activityIndicator.stopAnimating()
+                    UIApplication.shared.endIgnoringInteractionEvents()
+                    if error != nil {
+                        
+                        var displayErrorMessage = "Please try again later"
+                        
+                        if let errorMessage = error?.localizedDescription {
+                            
+                            displayErrorMessage = errorMessage
+                            
+                        }
+                        
+                        self.createAlert(title: "SignUp Error", message: displayErrorMessage)
+                        
+                        
+                    } else {
+                      print("user signed up")
+                        print("here 2")
+                        self.performSegue(withIdentifier: "showUserTable", sender: self)
+                    }
+                })
+                
+                
+                
+                
+            } else {
+                //LoginMode
+                
+                activityIndicator.stopAnimating()
+                UIApplication.shared.endIgnoringInteractionEvents()
+                
+                PFUser.logInWithUsername(inBackground: emailTextField.text!, password: passwordTextField.text!, block: { (success, error) in
+                    
+                    if error != nil {
+                        
+                        var displayErrorMessage = "Please try again later"
+                        
+                        if let errorMessage = error?.localizedDescription {
+                            
+                            displayErrorMessage = errorMessage
+                            
+                        }
+                        
+                        self.createAlert(title: "Login Error", message: displayErrorMessage)
+                        
+                    } else {
+                        print("logged in")
+                        
+                        print("here 3")
+                        self.performSegue(withIdentifier: "showUserTable", sender: self)
+                        
+                    }
+                })
+                
+            }
+        }
+    }
+    
+    @IBAction func changeSignupMode(_ sender: Any) {
+        
+        if signupMode {
+            
+            signupMode = false
+            //change to Login Mode
+            
+            signupOrLogin.setTitle("login", for: [])
+            
+            changeSignupModeButton.setTitle("sign up", for: [])
+            
+            messageLabel.text = "don't have an account"
+            
+        } else {
+            
+            signupMode = true
+            
+            //change to Signup mode
+            
+            signupOrLogin.setTitle("signup", for: [])
+            
+            changeSignupModeButton.setTitle("login", for: [])
+            
+            messageLabel.text = "already have an account?"
+            
+        }
+        
     }
     
     
-    @IBAction func pauseApp(_ sender: Any) {
-    }
-    @IBAction func restoreApp(_ sender: Any) {
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
-        
-        
-        
-        
-        
-        
-        // Not saving User in database multiple times
-        
-//        let user = PFObject(className: "Users")
-//        user["name"] = "jakson"
-//        user["phone"] = "5035430203"
-//        user["girlfriend"] = "Megan"
-//
-//        user.saveInBackground { (success, error) in
-//            if success {
-//                print("object save")
-//            } else {
-//                if let error = error {
-//                    print(error)
-//                } else {
-//                    print("error")
-//                }
-//            }
-//
-//        }
-//
-//        let query = PFQuery(className: "Users")
-//
-//        query.getObjectInBackground(withId: "uhXax3apzO") { (object, error) in
-//
-//            if error != nil {
-//                print(error ?? "there was an error")
-//            } else {
-//                if let user = object {
-//                    let stringGirlfriend = user["girlfriend"] as! String
-//                    if stringGirlfriend == "Sarah" {
-//                        user["girlfriend"] = "Kirsten"
-//                        user.saveInBackground(block: { (success, error) in
-//                            if success {
-//                                print("saved")
-//                                print("girlfriend updated")
-//                            } else {
-//                                print("there was an error updating")
-//                            }
-//                        })
-//
-//                    } else {
-//                        print("girlfriend name not right")
-//                    }
-//                }
-//            }
-//
-//        }
+        //do additonal work
     }
 
     override func didReceiveMemoryWarning() {
