@@ -85,7 +85,7 @@ class ViewController: UIViewController {
                         
                     } else {
                       print("user signed up")
-                        print("here 2")
+                       
                         self.performSegue(withIdentifier: "showUserTable", sender: self)
                     }
                 })

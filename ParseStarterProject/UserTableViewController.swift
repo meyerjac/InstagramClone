@@ -11,6 +11,7 @@ import Parse
 
 class UserTableViewController: UITableViewController {
     
+    var usernames = [""]
     
     @IBAction func logout(_ sender: Any) {
         PFUser.logOut()
@@ -31,6 +32,28 @@ class UserTableViewController: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        
+        let query = PFUser.query()
+        
+        query?.findObjectsInBackground(block: { (objects, error) in
+            
+            if error != nil {
+                
+                print(error!)
+            } else {
+                if let users = objects {
+                    
+                    for objects in users {
+                        
+                        if let user = objects as? PFUser {
+                            
+                            self.usernames.append(user.username!)
+                        }
+                    }
+                }
+            }
+            self.tableView.reloadData()
+        })
     }
 
     override func didReceiveMemoryWarning() {
@@ -47,13 +70,13 @@ class UserTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 4
+        return usernames.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
 
-        cell.textLabel?.text = "test"
+        cell.textLabel?.text = usernames[indexPath.row]
 
         return cell
     }
