@@ -15,6 +15,8 @@ class UserTableViewController: UITableViewController {
     var userIDs = [""]
     var isFollowing = ["": false]
     
+    var refresher: UIRefreshControl!
+    
     @IBAction func logout(_ sender: Any) {
         PFUser.logOut()
         performSegue(withIdentifier: "logoutSegue", sender: self)
@@ -24,17 +26,7 @@ class UserTableViewController: UITableViewController {
          self.navigationController?.navigationBar.isHidden = false
     }
     
-    
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
-        
+    @objc func refresh() {
         let query = PFUser.query()
         
         query?.findObjectsInBackground(block: { (objects, error) in
@@ -54,33 +46,62 @@ class UserTableViewController: UITableViewController {
                         
                         if let user = objects as? PFUser {
                             
-                            let usernameArray = user.username?.components(separatedBy: "@")
-                            
-                            self.usernames.append(usernameArray![0])
-                            self.userIDs.append(user.objectId!)
-                            
-                            let query = PFQuery(className: "Followers")
-                            
-                            query.whereKey("follower", equalTo: PFUser.current()?.objectId)
-                            query.whereKey("following", equalTo: user.objectId!)
-                            
-                            query.findObjectsInBackground(block: { (objects, error) in
-                                if let objects = objects {
-                                    if objects.count > 0 {
-                                        self.isFollowing[user.objectId!] = true
-                                    } else {
-                                        self.isFollowing[user.objectId!] = false
+                            if user.objectId != PFUser.current()?.objectId {
+                                
+                                let usernameArray = user.username?.components(separatedBy: "@")
+                                
+                                self.usernames.append(usernameArray![0])
+                                
+                                self.userIDs.append(user.objectId!)
+                                
+                                let query = PFQuery(className: "Followers")
+                                
+                                query.whereKey("follower", equalTo: PFUser.current()?.objectId)
+                                query.whereKey("following", equalTo: user.objectId!)
+                                
+                                query.findObjectsInBackground(block: { (objects, error) in
+                                    if let objects = objects {
+                                        if objects.count > 0 {
+                                            self.isFollowing[user.objectId!] = true
+                                        } else {
+                                            self.isFollowing[user.objectId!] = false
+                                        }
+                                        if self.isFollowing.count == self.usernames.count {
+                                            self.tableView.reloadData()
+                                            
+                                            self.refresher.endRefreshing()
+                                        }
                                     }
-                                    if self.isFollowing.count == self.usernames.count {
-                                        self.tableView.reloadData()
-                                    }
-                                }
-                            })
+                                })
+                            }
                         }
                     }
                 }
             }
         })
+    }
+    
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        // Uncomment the following line to preserve selection between presentations
+        // self.clearsSelectionOnViewWillAppear = false
+
+        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
+        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+        
+        refresh()
+        
+        refresher = UIRefreshControl()
+        
+        refresher.attributedTitle = NSAttributedString(string: "pull to refresh")
+        
+        refresher.addTarget(self, action: #selector(UserTableViewController.refresh), for: UIControlEvents.valueChanged )
+        
+        tableView.addSubview(refresher)
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -116,6 +137,32 @@ class UserTableViewController: UITableViewController {
         
         let cell = tableView.cellForRow(at: indexPath)
         
+        if isFollowing[userIDs[indexPath.row]]! {
+            
+            isFollowing[userIDs[indexPath.row]] = false
+            
+            cell?.accessoryType = UITableViewCellAccessoryType.none
+            
+            let query = PFQuery(className: "Followers")
+            
+            query.whereKey("follower", equalTo: PFUser.current()?.objectId)
+            query.whereKey("following", equalTo: userIDs[indexPath.row])
+            
+            query.findObjectsInBackground(block: { (objects, error) in
+                if let objects = objects {
+                    
+                    for object in objects {
+                        
+                        object.deleteInBackground()
+                        
+                    }
+                }
+            })
+            
+        } else {
+    
+        isFollowing[userIDs[indexPath.row]] = true
+            
         cell?.accessoryType = UITableViewCellAccessoryType.checkmark
         
         var following = PFObject(className: "Followers")
@@ -124,6 +171,7 @@ class UserTableViewController: UITableViewController {
         following["following"] = userIDs[indexPath.row]
         
         following.saveInBackground()
+        }
     }
  
     // Override to support editing the table view.
