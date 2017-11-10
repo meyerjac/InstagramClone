@@ -18,6 +18,10 @@
 		81BA81791A49E0DB00E65899 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81BA81781A49E0DB00E65899 /* AudioToolbox.framework */; };
 		81BA817B1A49E0E500E65899 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81BA817A1A49E0E500E65899 /* SystemConfiguration.framework */; };
 		81BA817F1A49E0F000E65899 /* libstdc++.6.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 81BA817E1A49E0F000E65899 /* libstdc++.6.dylib */; };
+		85258FF11FB635CC00090A8E /* PostViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85258FF01FB635CC00090A8E /* PostViewController.swift */; };
+		85258FF31FB6365700090A8E /* personPNG.png in Resources */ = {isa = PBXBuildFile; fileRef = 85258FF21FB6365700090A8E /* personPNG.png */; };
+		85258FF51FB650E900090A8E /* FeedTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85258FF41FB650E900090A8E /* FeedTableViewController.swift */; };
+		85258FF71FB6576500090A8E /* FeedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85258FF61FB6576500090A8E /* FeedTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +40,10 @@
 		81BA817A1A49E0E500E65899 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		81BA817E1A49E0F000E65899 /* libstdc++.6.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libstdc++.6.dylib"; path = "usr/lib/libstdc++.6.dylib"; sourceTree = SDKROOT; };
 		81BA81801A49E10C00E65899 /* ParseUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ParseUI.framework; sourceTree = "<group>"; };
+		85258FF01FB635CC00090A8E /* PostViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostViewController.swift; sourceTree = "<group>"; };
+		85258FF21FB6365700090A8E /* personPNG.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = personPNG.png; path = ../../../../../Downloads/personPNG.png; sourceTree = "<group>"; };
+		85258FF41FB650E900090A8E /* FeedTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedTableViewController.swift; sourceTree = "<group>"; };
+		85258FF61FB6576500090A8E /* FeedTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,7 +96,11 @@
 				81BA814A1A49DA1800E65899 /* AppDelegate.swift */,
 				81BA814C1A49DA1800E65899 /* ViewController.swift */,
 				814C3AC61B69877600E307BB /* Main.storyboard */,
+				85258FF61FB6576500090A8E /* FeedTableViewCell.swift */,
+				85258FF41FB650E900090A8E /* FeedTableViewController.swift */,
+				85258FF01FB635CC00090A8E /* PostViewController.swift */,
 				54E187441FB3EBBE00180730 /* UserTableViewController.swift */,
+				85258FF21FB6365700090A8E /* personPNG.png */,
 			);
 			path = ParseStarterProject;
 			sourceTree = "<group>";
@@ -178,6 +190,7 @@
 			files = (
 				814C3ACA1B69877600E307BB /* Main.storyboard in Resources */,
 				814C3ACB1B69877600E307BB /* Images.xcassets in Resources */,
+				85258FF31FB6365700090A8E /* personPNG.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -188,7 +201,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				85258FF11FB635CC00090A8E /* PostViewController.swift in Sources */,
+				85258FF71FB6576500090A8E /* FeedTableViewCell.swift in Sources */,
 				81BA814D1A49DA1800E65899 /* ViewController.swift in Sources */,
+				85258FF51FB650E900090A8E /* FeedTableViewController.swift in Sources */,
 				54E187451FB3EBBE00180730 /* UserTableViewController.swift in Sources */,
 				81BA814B1A49DA1800E65899 /* AppDelegate.swift in Sources */,
 			);
